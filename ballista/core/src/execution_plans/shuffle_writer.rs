@@ -22,7 +22,6 @@
 
 use datafusion::arrow::ipc::writer::IpcWriteOptions;
 use datafusion::arrow::ipc::CompressionType;
-use datafusion::physical_plan::expressions::PhysicalSortExpr;
 
 use datafusion::arrow::ipc::writer::StreamWriter;
 use std::any::Any;
@@ -60,6 +59,7 @@ use datafusion::arrow::error::ArrowError;
 use datafusion::execution::context::TaskContext;
 use datafusion::physical_plan::repartition::BatchPartitioner;
 use datafusion::physical_plan::stream::RecordBatchStreamAdapter;
+use datafusion::physical_plan::ExecutionPlanProperties;
 use log::{debug, info};
 
 /// ShuffleWriterExec represents a section of a query plan that has consistent partitioning and
@@ -351,14 +351,18 @@ impl ExecutionPlan for ShuffleWriterExec {
 
     /// If [`shuffle_output_partitioning`] is none, then there's no need to do repartitioning.
     /// Therefore, the partition is the same as its input plan's.
-    fn output_partitioning(&self) -> Partitioning {
-        self.shuffle_output_partitioning
-            .clone()
-            .unwrap_or_else(|| self.plan.output_partitioning())
-    }
+    // fn output_partitioning(&self) -> Partitioning {
+    //     self.shuffle_output_partitioning
+    //         .clone()
+    //         .unwrap_or_else(|| self.plan.output_partitioning())
+    // }
 
-    fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-        None
+    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
+    //     None
+    // }
+
+    fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
+        todo!()
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {

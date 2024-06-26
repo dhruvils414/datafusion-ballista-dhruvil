@@ -36,7 +36,6 @@ use datafusion::arrow::error::ArrowError;
 use datafusion::arrow::record_batch::RecordBatch;
 
 use datafusion::error::Result;
-use datafusion::physical_plan::expressions::PhysicalSortExpr;
 use datafusion::physical_plan::metrics::{ExecutionPlanMetricsSet, MetricsSet};
 use datafusion::physical_plan::{
     ColumnStatistics, DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning,
@@ -46,7 +45,7 @@ use futures::{Stream, StreamExt, TryStreamExt};
 
 use crate::error::BallistaError;
 use datafusion::execution::context::TaskContext;
-use datafusion::physical_plan::common::AbortOnDropMany;
+// use datafusion::physical_plan::common::AbortOnDropMany;
 use datafusion::physical_plan::stream::RecordBatchStreamAdapter;
 use itertools::Itertools;
 use log::{error, info};
@@ -108,14 +107,18 @@ impl ExecutionPlan for ShuffleReaderExec {
         self.schema.clone()
     }
 
-    fn output_partitioning(&self) -> Partitioning {
-        // TODO partitioning may be known and could be populated here
-        // see https://github.com/apache/arrow-datafusion/issues/758
-        Partitioning::UnknownPartitioning(self.partition.len())
-    }
+    // fn output_partitioning(&self) -> Partitioning {
+    //     // TODO partitioning may be known and could be populated here
+    //     // see https://github.com/apache/arrow-datafusion/issues/758
+    //     Partitioning::UnknownPartitioning(self.partition.len())
+    // }
 
-    fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-        None
+    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
+    //     None
+    // }
+
+    fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
+        todo!()
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {
