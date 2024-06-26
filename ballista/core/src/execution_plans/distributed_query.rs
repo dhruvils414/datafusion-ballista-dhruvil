@@ -195,14 +195,6 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
         self.plan.schema().as_ref().clone().into()
     }
 
-    // fn output_partitioning(&self) -> Partitioning {
-    //     Partitioning::UnknownPartitioning(1)
-    // }
-
-    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-    //     None
-    // }
-
     fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
         &self.properties
     }
