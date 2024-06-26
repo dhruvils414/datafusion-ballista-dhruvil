@@ -18,6 +18,7 @@
 use async_trait::async_trait;
 use datafusion::arrow::ipc::reader::StreamReader;
 use datafusion::common::stats::Precision;
+use datafusion::physical_expr::EquivalenceProperties;
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt::Debug;
@@ -38,8 +39,9 @@ use datafusion::arrow::record_batch::RecordBatch;
 use datafusion::error::Result;
 use datafusion::physical_plan::metrics::{ExecutionPlanMetricsSet, MetricsSet};
 use datafusion::physical_plan::{
-    ColumnStatistics, DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning,
-    RecordBatchStream, SendableRecordBatchStream, Statistics,
+    ColumnStatistics, DisplayAs, DisplayFormatType, ExecutionMode, ExecutionPlan,
+    Partitioning, PlanProperties, RecordBatchStream, SendableRecordBatchStream,
+    Statistics,
 };
 use futures::{Stream, StreamExt, TryStreamExt};
 
@@ -66,6 +68,8 @@ pub struct ShuffleReaderExec {
     pub partition: Vec<Vec<PartitionLocation>>,
     /// Execution metrics
     metrics: ExecutionPlanMetricsSet,
+
+    properties: PlanProperties,
 }
 
 impl ShuffleReaderExec {
@@ -75,11 +79,17 @@ impl ShuffleReaderExec {
         partition: Vec<Vec<PartitionLocation>>,
         schema: SchemaRef,
     ) -> Result<Self> {
+        let properties = PlanProperties::new(
+            EquivalenceProperties::new(schema.clone()),
+            Partitioning::UnknownPartitioning(partition.len()),
+            ExecutionMode::Bounded,
+        );
         Ok(Self {
             stage_id,
             schema,
             partition,
             metrics: ExecutionPlanMetricsSet::new(),
+            properties,
         })
     }
 }
@@ -107,18 +117,8 @@ impl ExecutionPlan for ShuffleReaderExec {
         self.schema.clone()
     }
 
-    // fn output_partitioning(&self) -> Partitioning {
-    //     // TODO partitioning may be known and could be populated here
-    //     // see https://github.com/apache/arrow-datafusion/issues/758
-    //     Partitioning::UnknownPartitioning(self.partition.len())
-    // }
-
-    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-    //     None
-    // }
-
     fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
-        todo!()
+        &self.properties
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {
