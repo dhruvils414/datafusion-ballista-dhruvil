@@ -30,7 +30,6 @@ use datafusion::arrow::record_batch::RecordBatch;
 use datafusion::error::{DataFusionError, Result};
 use datafusion::execution::context::TaskContext;
 use datafusion::logical_expr::LogicalPlan;
-use datafusion::physical_plan::expressions::PhysicalSortExpr;
 use datafusion::physical_plan::stream::RecordBatchStreamAdapter;
 use datafusion::physical_plan::{
     DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, SendableRecordBatchStream,
@@ -147,12 +146,16 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
         self.plan.schema().as_ref().clone().into()
     }
 
-    fn output_partitioning(&self) -> Partitioning {
-        Partitioning::UnknownPartitioning(1)
-    }
+    // fn output_partitioning(&self) -> Partitioning {
+    //     Partitioning::UnknownPartitioning(1)
+    // }
 
-    fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-        None
+    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
+    //     None
+    // }
+
+    fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
+        todo!()
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {
