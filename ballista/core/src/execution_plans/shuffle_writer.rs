@@ -24,6 +24,7 @@ use datafusion::arrow::ipc::writer::IpcWriteOptions;
 use datafusion::arrow::ipc::CompressionType;
 
 use datafusion::arrow::ipc::writer::StreamWriter;
+use datafusion::physical_expr::EquivalenceProperties;
 use std::any::Any;
 use std::fs;
 use std::fs::File;
@@ -50,8 +51,8 @@ use datafusion::physical_plan::metrics::{
 };
 
 use datafusion::physical_plan::{
-    DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, SendableRecordBatchStream,
-    Statistics,
+    DisplayAs, DisplayFormatType, ExecutionMode, ExecutionPlan, Partitioning,
+    PlanProperties, SendableRecordBatchStream, Statistics,
 };
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
 
@@ -81,6 +82,7 @@ pub struct ShuffleWriterExec {
     shuffle_output_partitioning: Option<Partitioning>,
     /// Execution metrics
     metrics: ExecutionPlanMetricsSet,
+    properties: PlanProperties,
 }
 
 pub struct WriteTracker {
@@ -120,6 +122,7 @@ impl ShuffleWriteMetrics {
 
 impl ShuffleWriterExec {
     /// Create a new shuffle writer
+
     pub fn try_new(
         job_id: String,
         stage_id: usize,
@@ -127,6 +130,13 @@ impl ShuffleWriterExec {
         work_dir: String,
         shuffle_output_partitioning: Option<Partitioning>,
     ) -> Result<Self> {
+        let properties = PlanProperties::new(
+            EquivalenceProperties::new(plan.schema()),
+            shuffle_output_partitioning
+                .clone()
+                .unwrap_or_else(|| plan.output_partitioning().clone()),
+            ExecutionMode::Bounded,
+        );
         Ok(Self {
             job_id,
             stage_id,
@@ -134,6 +144,7 @@ impl ShuffleWriterExec {
             work_dir,
             shuffle_output_partitioning,
             metrics: ExecutionPlanMetricsSet::new(),
+            properties,
         })
     }
 
@@ -349,20 +360,8 @@ impl ExecutionPlan for ShuffleWriterExec {
         self.plan.schema()
     }
 
-    /// If [`shuffle_output_partitioning`] is none, then there's no need to do repartitioning.
-    /// Therefore, the partition is the same as its input plan's.
-    // fn output_partitioning(&self) -> Partitioning {
-    //     self.shuffle_output_partitioning
-    //         .clone()
-    //         .unwrap_or_else(|| self.plan.output_partitioning())
-    // }
-
-    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-    //     None
-    // }
-
     fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
-        todo!()
+        &self.properties
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {
