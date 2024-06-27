@@ -47,6 +47,8 @@ use crate::serde::protobuf::ballista_physical_plan_node::PhysicalPlanType;
 use crate::serde::scheduler::PartitionLocation;
 pub use generated::ballista as protobuf;
 
+use self::scheduler::to_proto::PEWrapper;
+
 pub mod generated;
 pub mod scheduler;
 
@@ -205,7 +207,7 @@ impl PhysicalExtensionCodec for BallistaPhysicalExtensionCodec {
                     Some(datafusion_proto::protobuf::PhysicalHashRepartition {
                         hash_expr: exprs
                             .iter()
-                            .map(|expr| expr.clone().try_into())
+                            .map(|expr| PEWrapper(expr.clone()).try_into())
                             .collect::<Result<Vec<_>, DataFusionError>>()?,
                         partition_count: *partition_count as u64,
                     })
