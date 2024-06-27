@@ -26,6 +26,7 @@ use datafusion::execution::FunctionRegistry;
 use datafusion::physical_plan::{ExecutionPlan, Partitioning};
 use datafusion_proto::common::proto_error;
 use datafusion_proto::physical_plan::from_proto::parse_protobuf_hash_partitioning;
+use datafusion_proto::physical_plan::DefaultPhysicalExtensionCodec;
 use datafusion_proto::protobuf::{LogicalPlanNode, PhysicalPlanNode};
 use datafusion_proto::{
     convert_required,
@@ -146,6 +147,7 @@ impl PhysicalExtensionCodec for BallistaPhysicalExtensionCodec {
                     shuffle_writer.output_partitioning.as_ref(),
                     registry,
                     input.schema().as_ref(),
+                    &DefaultPhysicalExtensionCodec {},
                 )?;
 
                 Ok(Arc::new(ShuffleWriterExec::try_new(
