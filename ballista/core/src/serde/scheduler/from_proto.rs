@@ -417,7 +417,8 @@ fn reset_metrics_for_execution_plan(
 ) -> Result<Arc<dyn ExecutionPlan>, BallistaError> {
     plan.transform(&|plan| {
         let children = plan.children().clone();
-        plan.with_new_children(children).map(Transformed::Yes)
+        plan.with_new_children(children).map(Transformed::yes)
     })
+    .map(|x| x.data)
     .map_err(BallistaError::DataFusionError)
 }
