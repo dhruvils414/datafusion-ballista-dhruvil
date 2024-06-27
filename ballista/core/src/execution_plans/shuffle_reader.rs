@@ -47,7 +47,6 @@ use futures::{Stream, StreamExt, TryStreamExt};
 
 use crate::error::BallistaError;
 use datafusion::execution::context::TaskContext;
-// use datafusion::physical_plan::common::AbortOnDropMany;
 use datafusion::physical_plan::stream::RecordBatchStreamAdapter;
 use itertools::Itertools;
 use log::{error, info};
@@ -245,9 +244,6 @@ impl RecordBatchStream for LocalShuffleStream {
 /// Adapter for a tokio ReceiverStream that implements the SendableRecordBatchStream interface
 struct AbortableReceiverStream {
     inner: ReceiverStream<result::Result<SendableRecordBatchStream, BallistaError>>,
-
-    #[allow(dead_code)]
-    drop_helper: AbortOnDropMany<()>,
 }
 
 impl AbortableReceiverStream {
@@ -256,13 +252,10 @@ impl AbortableReceiverStream {
         rx: tokio::sync::mpsc::Receiver<
             result::Result<SendableRecordBatchStream, BallistaError>,
         >,
-        join_handles: Vec<JoinHandle<()>>,
+        _join_handles: Vec<JoinHandle<()>>,
     ) -> AbortableReceiverStream {
         let inner = ReceiverStream::new(rx);
-        Self {
-            inner,
-            drop_helper: AbortOnDropMany(join_handles),
-        }
+        Self { inner }
     }
 }
 
