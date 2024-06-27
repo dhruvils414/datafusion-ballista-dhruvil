@@ -40,7 +40,6 @@ use datafusion_proto::logical_plan::{
     AsLogicalPlan, DefaultLogicalExtensionCodec, LogicalExtensionCodec,
 };
 use futures::{Stream, StreamExt, TryFutureExt, TryStreamExt};
-use itertools::Itertools;
 use log::{error, info};
 use std::any::Any;
 use std::fmt::Debug;
@@ -80,8 +79,8 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
             .schema()
             .fields()
             .into_iter()
-            .map(|x| x.field().clone())
-            .collect_vec();
+            .cloned()
+            .collect::<Vec<_>>();
         let metadata = plan.schema().metadata().clone();
         let ss = Schema::new(fields);
         let ss = ss.with_metadata(metadata);
@@ -112,8 +111,8 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
             .schema()
             .fields()
             .into_iter()
-            .map(|x| x.field().clone())
-            .collect_vec();
+            .cloned()
+            .collect::<Vec<_>>();
         let metadata = plan.schema().metadata().clone();
         let ss = Schema::new(fields);
         let ss = ss.with_metadata(metadata);
@@ -146,8 +145,8 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
             .schema()
             .fields()
             .into_iter()
-            .map(|x| x.field().clone())
-            .collect_vec();
+            .cloned()
+            .collect::<Vec<_>>();
         let metadata = plan.schema().metadata().clone();
         let ss = Schema::new(fields);
         let ss = ss.with_metadata(metadata);
@@ -212,8 +211,8 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
             .schema()
             .fields()
             .into_iter()
-            .map(|x| x.field().clone())
-            .collect_vec();
+            .cloned()
+            .collect::<Vec<_>>();
         let metadata = self.plan.schema().metadata().clone();
         let ss = Schema::new(fields);
         let ss = ss.with_metadata(metadata);

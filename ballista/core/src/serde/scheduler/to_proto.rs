@@ -172,6 +172,7 @@ impl TryInto<protobuf::OperatorMetric> for &MetricValue {
                         .unwrap_or(0),
                 )),
             }),
+            MetricValue::SpilledRows(_) => todo!(),
         }
     }
 }

@@ -17,8 +17,8 @@
 use crate::error::{BallistaError, Result};
 use crate::plugin::plugin_manager::global_plugin_manager;
 use crate::plugin::{Plugin, PluginEnum, PluginRegistrar};
-use datafusion::physical_plan::udaf::AggregateUDF;
-use datafusion::physical_plan::udf::ScalarUDF;
+use datafusion::logical_expr::AggregateUDF;
+use datafusion::logical_expr::ScalarUDF;
 use libloading::{Library, Symbol};
 use std::any::Any;
 use std::collections::HashMap;
