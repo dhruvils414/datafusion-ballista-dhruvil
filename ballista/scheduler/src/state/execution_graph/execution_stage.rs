@@ -1169,6 +1169,7 @@ impl Debug for FailedStage {
     }
 }
 
+use datafusion::physical_plan::ExecutionPlanProperties;
 /// Get the total number of partitions for a stage with plan.
 /// Only for [`ShuffleWriterExec`], the input partition count and the output partition count
 /// will be different. Here, we should use the input partition count.

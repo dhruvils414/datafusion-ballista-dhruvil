@@ -25,10 +25,8 @@ use std::{any::Any, pin::Pin};
 use datafusion::arrow::{datatypes::SchemaRef, record_batch::RecordBatch};
 use datafusion::error::DataFusionError;
 use datafusion::execution::context::TaskContext;
-use datafusion::physical_plan::expressions::PhysicalSortExpr;
 use datafusion::physical_plan::{
-    DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, SendableRecordBatchStream,
-    Statistics,
+    DisplayAs, DisplayFormatType, ExecutionPlan, SendableRecordBatchStream, Statistics,
 };
 use datafusion::{error::Result, physical_plan::RecordBatchStream};
 use futures::stream::SelectAll;
@@ -61,6 +59,7 @@ impl DisplayAs for CollectExec {
     }
 }
 
+use datafusion::physical_plan::ExecutionPlanProperties;
 impl ExecutionPlan for CollectExec {
     fn as_any(&self) -> &dyn Any {
         self
@@ -70,12 +69,16 @@ impl ExecutionPlan for CollectExec {
         self.plan.schema()
     }
 
-    fn output_partitioning(&self) -> Partitioning {
-        Partitioning::UnknownPartitioning(1)
-    }
+    // fn output_partitioning(&self) -> Partitioning {
+    //     Partitioning::UnknownPartitioning(1)
+    // }
 
-    fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-        None
+    // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
+    //     None
+    // }
+
+    fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
+        todo!()
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {

@@ -133,7 +133,7 @@ impl DistributedPlanner {
         } else if let Some(repart) =
             execution_plan.as_any().downcast_ref::<RepartitionExec>()
         {
-            match repart.output_partitioning() {
+            match repart.partitioning() {
                 Partitioning::Hash(_, _) => {
                     let shuffle_writer = create_shuffle_writer(
                         job_id,

@@ -140,6 +140,8 @@ pub struct RunningTaskInfo {
     pub executor_id: String,
 }
 
+use datafusion::physical_plan::ExecutionPlanProperties;
+
 impl ExecutionGraph {
     pub fn new(
         scheduler_id: &str,

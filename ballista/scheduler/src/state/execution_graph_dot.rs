@@ -286,7 +286,7 @@ aggr=[{}]",
     } else if let Some(exec) = plan.as_any().downcast_ref::<RepartitionExec>() {
         format!(
             "RepartitionExec [{}]",
-            format_partitioning(exec.output_partitioning())
+            format_partitioning(exec.partitioning().clone())
         )
     } else if let Some(exec) = plan.as_any().downcast_ref::<HashJoinExec>() {
         let join_expr = exec

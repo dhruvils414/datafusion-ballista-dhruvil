@@ -28,9 +28,9 @@ use ballista_core::serde::scheduler::PartitionId;
 use dashmap::DashMap;
 use datafusion::execution::context::TaskContext;
 use datafusion::execution::runtime_env::RuntimeEnv;
+use datafusion::logical_expr::AggregateUDF;
+use datafusion::logical_expr::ScalarUDF;
 use datafusion::logical_expr::WindowUDF;
-use datafusion::physical_plan::udaf::AggregateUDF;
-use datafusion::physical_plan::udf::ScalarUDF;
 use futures::future::AbortHandle;
 use std::collections::HashMap;
 use std::future::Future;
@@ -211,9 +211,8 @@ mod test {
     use crate::execution_engine::DefaultQueryStageExec;
     use ballista_core::serde::scheduler::PartitionId;
     use datafusion::error::{DataFusionError, Result};
-    use datafusion::physical_expr::PhysicalSortExpr;
     use datafusion::physical_plan::{
-        DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, RecordBatchStream,
+        DisplayAs, DisplayFormatType, ExecutionPlan, RecordBatchStream,
         SendableRecordBatchStream, Statistics,
     };
     use datafusion::prelude::SessionContext;
@@ -272,12 +271,16 @@ mod test {
             Arc::new(Schema::empty())
         }
 
-        fn output_partitioning(&self) -> Partitioning {
-            Partitioning::UnknownPartitioning(1)
-        }
+        // fn output_partitioning(&self) -> Partitioning {
+        //     Partitioning::UnknownPartitioning(1)
+        // }
 
-        fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
-            None
+        // fn output_ordering(&self) -> Option<&[PhysicalSortExpr]> {
+        //     None
+        // }
+
+        fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
+            todo!()
         }
 
         fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {
