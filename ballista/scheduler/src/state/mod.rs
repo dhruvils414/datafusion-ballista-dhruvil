@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-use datafusion::common::tree_node::{TreeNode, VisitRecursion};
+use datafusion::common::tree_node::{TreeNode, TreeNodeRecursion};
 use datafusion::datasource::listing::{ListingTable, ListingTableUrl};
 use datafusion::datasource::source_as_provider;
 use datafusion::error::DataFusionError;
@@ -363,7 +363,7 @@ impl<T: 'static + AsLogicalPlan, U: 'static + AsExecutionPlan> SchedulerState<T,
             debug!("Optimized plan: {}", optimized_plan.display_indent());
         }
 
-        plan.apply(&mut |plan| {
+        plan.apply(|plan| {
             if let LogicalPlan::TableScan(scan) = plan {
                 let provider = source_as_provider(&scan.source)?;
                 if let Some(table) = provider.as_any().downcast_ref::<ListingTable>() {
@@ -399,7 +399,7 @@ impl<T: 'static + AsLogicalPlan, U: 'static + AsExecutionPlan> SchedulerState<T,
                     }
                 }
             }
-            Ok(VisitRecursion::Continue)
+            Ok(TreeNodeRecursion::Continue)
         })?;
 
         let plan = session_ctx.state().create_physical_plan(plan).await?;
