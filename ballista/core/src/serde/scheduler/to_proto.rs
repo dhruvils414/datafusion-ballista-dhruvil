@@ -17,19 +17,20 @@
 
 use datafusion::error::DataFusionError;
 use datafusion::physical_plan::metrics::{MetricValue, MetricsSet};
+use datafusion_proto::physical_plan::to_proto::serialize_physical_expr;
+use datafusion_proto::physical_plan::DefaultPhysicalExtensionCodec;
 use std::convert::TryInto;
-use std::sync::Arc;
 
 use crate::error::BallistaError;
 
 use crate::serde::protobuf;
-use datafusion_proto::protobuf::{self as datafusion_protobuf, PhysicalExprNode};
+use datafusion_proto::protobuf::{self as datafusion_protobuf};
 
 use crate::serde::scheduler::{
     Action, ExecutorData, ExecutorMetadata, ExecutorSpecification, PartitionId,
     PartitionLocation, PartitionStats,
 };
-use datafusion::physical_plan::{Partitioning, PhysicalExpr};
+use datafusion::physical_plan::Partitioning;
 use protobuf::{action::ActionType, operator_metric, NamedCount, NamedGauge, NamedTime};
 
 impl TryInto<protobuf::Action> for Action {
@@ -105,7 +106,13 @@ pub fn hash_partitioning_to_proto(
             Ok(Some(datafusion_protobuf::PhysicalHashRepartition {
                 hash_expr: exprs
                     .iter()
-                    .map(|expr| PEWrapper(expr.clone()).try_into())
+                    .map(|expr| expr.clone())
+                    .map(|expr| {
+                        serialize_physical_expr(
+                            expr.clone(),
+                            &DefaultPhysicalExtensionCodec {},
+                        )
+                    })
                     .collect::<Result<Vec<_>, DataFusionError>>()?,
                 partition_count: *partition_count as u64,
             }))
@@ -114,16 +121,6 @@ pub fn hash_partitioning_to_proto(
         other => Err(BallistaError::General(format!(
             "scheduler::to_proto() invalid partitioning for ExecutePartition: {other:?}"
         ))),
-    }
-}
-
-pub struct PEWrapper(pub Arc<dyn PhysicalExpr>);
-
-impl TryInto<PhysicalExprNode> for PEWrapper {
-    type Error = DataFusionError;
-
-    fn try_into(self) -> Result<PhysicalExprNode, Self::Error> {
-        todo!()
     }
 }
 
