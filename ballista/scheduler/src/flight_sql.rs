@@ -295,12 +295,9 @@ impl FlightSqlServiceImpl {
             };
             let buf = fetch.as_any().encode_to_vec();
             let ticket = Ticket { ticket: buf.into() };
-            let fiep = FlightEndpoint {
-                ticket: Some(ticket),
-                location: vec![loc],
-                expiration_time: todo!(),
-                app_metadata: todo!(),
-            };
+            let mut fiep = FlightEndpoint::new();
+            fiep.ticket = Some(ticket);
+            fiep.location = vec![loc];
             fieps.push(fiep);
         }
         Ok(fieps)
@@ -326,12 +323,9 @@ impl FlightSqlServiceImpl {
         };
         let buf = fetch.as_any().encode_to_vec();
         let ticket = Ticket { ticket: buf.into() };
-        let fiep = FlightEndpoint {
-            ticket: Some(ticket),
-            location: vec![loc],
-            expiration_time: todo!(),
-            app_metadata: todo!(),
-        };
+        let mut fiep = FlightEndpoint::new();
+        fiep.ticket = Some(ticket);
+        fiep.location = vec![loc];
         let fieps = vec![fiep];
         Ok(fieps)
     }
@@ -403,15 +397,13 @@ impl FlightSqlServiceImpl {
             cmd: Vec::new().into(),
             path: vec![],
         };
-        let info = FlightInfo {
-            schema: schema_bytes.into(),
-            flight_descriptor: Some(flight_desc),
-            endpoint: fieps,
-            total_records: num_rows,
-            total_bytes: num_bytes,
-            ordered: false,
-            app_metadata: todo!(),
-        };
+        let mut info = FlightInfo::new();
+        info.schema = schema_bytes.into();
+        info.flight_descriptor = Some(flight_desc);
+        info.endpoint = fieps;
+        info.total_records = num_rows;
+        info.total_bytes = num_bytes;
+        info.ordered = false;
         Response::new(info)
     }
 
