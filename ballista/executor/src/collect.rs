@@ -27,7 +27,7 @@ use datafusion::error::DataFusionError;
 use datafusion::execution::context::TaskContext;
 use datafusion::physical_expr::EquivalenceProperties;
 use datafusion::physical_plan::{
-    DisplayAs, DisplayFormatType, ExecutionMode, ExecutionPlan, PlanProperties,
+    DisplayAs, DisplayFormatType, ExecutionPlan, PlanProperties,
     SendableRecordBatchStream, Statistics,
 };
 use datafusion::{error::Result, physical_plan::RecordBatchStream};
@@ -48,7 +48,7 @@ impl CollectExec {
             properties: PlanProperties::new(
                 EquivalenceProperties::new(plan.schema().clone()),
                 plan.output_partitioning().clone(),
-                ExecutionMode::Bounded,
+                plan.execution_mode(),
             ),
             plan,
         }

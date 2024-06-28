@@ -53,7 +53,7 @@ impl UnresolvedShuffleExec {
     ) -> Self {
         let properties = PlanProperties::new(
             EquivalenceProperties::new(schema.clone()),
-            Partitioning::UnknownPartitioning(1),
+            Partitioning::UnknownPartitioning(output_partition_count),
             ExecutionMode::Bounded,
         );
 

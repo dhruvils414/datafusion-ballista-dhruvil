@@ -212,8 +212,8 @@ mod test {
     use ballista_core::serde::scheduler::PartitionId;
     use datafusion::error::{DataFusionError, Result};
     use datafusion::physical_plan::{
-        DisplayAs, DisplayFormatType, ExecutionPlan, PlanProperties, RecordBatchStream,
-        SendableRecordBatchStream, Statistics,
+        DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, PlanProperties,
+        RecordBatchStream, SendableRecordBatchStream, Statistics,
     };
     use datafusion::prelude::SessionContext;
     use futures::Stream;
@@ -248,6 +248,20 @@ mod test {
     #[derive(Debug)]
     pub struct NeverendingOperator {
         properties: PlanProperties,
+    }
+
+    impl NeverendingOperator {
+        fn new() -> Self {
+            Self {
+                properties: PlanProperties::new(
+                    datafusion::physical_expr::EquivalenceProperties::new(Arc::new(
+                        Schema::empty(),
+                    )),
+                    Partitioning::UnknownPartitioning(1),
+                    datafusion::physical_plan::ExecutionMode::Bounded,
+                ),
+            }
+        }
     }
 
     impl DisplayAs for NeverendingOperator {
@@ -321,9 +335,7 @@ mod test {
         let shuffle_write = ShuffleWriterExec::try_new(
             "job-id".to_owned(),
             1,
-            Arc::new(NeverendingOperator {
-                properties: todo!(),
-            }),
+            Arc::new(NeverendingOperator::new()),
             work_dir.clone(),
             None,
         )
