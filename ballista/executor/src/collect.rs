@@ -25,8 +25,9 @@ use std::{any::Any, pin::Pin};
 use datafusion::arrow::{datatypes::SchemaRef, record_batch::RecordBatch};
 use datafusion::error::DataFusionError;
 use datafusion::execution::context::TaskContext;
+use datafusion::physical_expr::EquivalenceProperties;
 use datafusion::physical_plan::{
-    DisplayAs, DisplayFormatType, ExecutionPlan, PlanProperties,
+    DisplayAs, DisplayFormatType, ExecutionMode, ExecutionPlan, PlanProperties,
     SendableRecordBatchStream, Statistics,
 };
 use datafusion::{error::Result, physical_plan::RecordBatchStream};
@@ -44,8 +45,12 @@ pub struct CollectExec {
 impl CollectExec {
     pub fn new(plan: Arc<dyn ExecutionPlan>) -> Self {
         Self {
+            properties: PlanProperties::new(
+                EquivalenceProperties::new(plan.schema().clone()),
+                plan.output_partitioning().clone(),
+                ExecutionMode::Bounded,
+            ),
             plan,
-            properties: todo!(),
         }
     }
 }

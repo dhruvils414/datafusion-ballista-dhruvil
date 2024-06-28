@@ -132,9 +132,13 @@ impl TryInto<protobuf::OperatorMetric> for &MetricValue {
 
     fn try_into(self) -> Result<protobuf::OperatorMetric, Self::Error> {
         match self {
-            MetricValue::OutputRows(count) => Ok(protobuf::OperatorMetric {
-                metric: Some(operator_metric::Metric::OutputRows(count.value() as u64)),
-            }),
+            MetricValue::OutputRows(count) | MetricValue::SpilledRows(count) => {
+                Ok(protobuf::OperatorMetric {
+                    metric: Some(operator_metric::Metric::OutputRows(
+                        count.value() as u64
+                    )),
+                })
+            }
             MetricValue::ElapsedCompute(time) => Ok(protobuf::OperatorMetric {
                 metric: Some(operator_metric::Metric::ElapseTime(time.value() as u64)),
             }),
@@ -183,7 +187,6 @@ impl TryInto<protobuf::OperatorMetric> for &MetricValue {
                         .unwrap_or(0),
                 )),
             }),
-            MetricValue::SpilledRows(_) => todo!(),
         }
     }
 }
