@@ -212,7 +212,7 @@ mod test {
     use ballista_core::serde::scheduler::PartitionId;
     use datafusion::error::{DataFusionError, Result};
     use datafusion::physical_plan::{
-        DisplayAs, DisplayFormatType, ExecutionPlan, RecordBatchStream,
+        DisplayAs, DisplayFormatType, ExecutionPlan, PlanProperties, RecordBatchStream,
         SendableRecordBatchStream, Statistics,
     };
     use datafusion::prelude::SessionContext;
@@ -246,7 +246,9 @@ mod test {
 
     /// An ExecutionPlan which will never terminate
     #[derive(Debug)]
-    pub struct NeverendingOperator;
+    pub struct NeverendingOperator {
+        properties: PlanProperties,
+    }
 
     impl DisplayAs for NeverendingOperator {
         fn fmt_as(
@@ -280,7 +282,7 @@ mod test {
         // }
 
         fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
-            todo!()
+            &self.properties
         }
 
         fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {
@@ -319,7 +321,9 @@ mod test {
         let shuffle_write = ShuffleWriterExec::try_new(
             "job-id".to_owned(),
             1,
-            Arc::new(NeverendingOperator),
+            Arc::new(NeverendingOperator {
+                properties: todo!(),
+            }),
             work_dir.clone(),
             None,
         )

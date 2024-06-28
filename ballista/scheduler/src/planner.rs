@@ -177,7 +177,7 @@ fn create_unresolved_shuffle(
     Arc::new(UnresolvedShuffleExec::new(
         shuffle_writer.stage_id(),
         shuffle_writer.schema(),
-        shuffle_writer.output_partitioning().partition_count(),
+        shuffle_writer.properties().partitioning.partition_count(),
     ))
 }
 
@@ -263,7 +263,7 @@ pub fn rollback_resolved_shuffles(
     for child in stage.children() {
         if let Some(shuffle_reader) = child.as_any().downcast_ref::<ShuffleReaderExec>() {
             let output_partition_count =
-                shuffle_reader.output_partitioning().partition_count();
+                shuffle_reader.properties().partitioning.partition_count();
             let stage_id = shuffle_reader.stage_id;
 
             let unresolved_shuffle = Arc::new(UnresolvedShuffleExec::new(
@@ -495,7 +495,8 @@ order by
         assert_eq!(
             2,
             stages[0].children()[0]
-                .output_partitioning()
+                .properties()
+                .partitioning
                 .partition_count()
         );
         assert_eq!(
@@ -510,7 +511,8 @@ order by
         assert_eq!(
             1,
             stages[1].children()[0]
-                .output_partitioning()
+                .properties()
+                .partitioning
                 .partition_count()
         );
         assert_eq!(
@@ -523,7 +525,7 @@ order by
 
         // join and partial hash aggregate
         let input = stages[2].children()[0].clone();
-        assert_eq!(2, input.output_partitioning().partition_count());
+        assert_eq!(2, input.properties().partitioning.partition_count());
         assert_eq!(
             2,
             stages[2]
@@ -561,7 +563,8 @@ order by
         assert_eq!(
             2,
             stages[3].children()[0]
-                .output_partitioning()
+                .properties()
+                .partitioning
                 .partition_count()
         );
         assert!(stages[3].shuffle_output_partitioning().is_none());
@@ -570,7 +573,8 @@ order by
         assert_eq!(
             1,
             stages[4].children()[0]
-                .output_partitioning()
+                .properties()
+                .partitioning
                 .partition_count()
         );
         assert!(stages[4].shuffle_output_partitioning().is_none());

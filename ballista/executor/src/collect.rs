@@ -26,7 +26,8 @@ use datafusion::arrow::{datatypes::SchemaRef, record_batch::RecordBatch};
 use datafusion::error::DataFusionError;
 use datafusion::execution::context::TaskContext;
 use datafusion::physical_plan::{
-    DisplayAs, DisplayFormatType, ExecutionPlan, SendableRecordBatchStream, Statistics,
+    DisplayAs, DisplayFormatType, ExecutionPlan, PlanProperties,
+    SendableRecordBatchStream, Statistics,
 };
 use datafusion::{error::Result, physical_plan::RecordBatchStream};
 use futures::stream::SelectAll;
@@ -37,11 +38,15 @@ use futures::Stream;
 #[derive(Debug, Clone)]
 pub struct CollectExec {
     plan: Arc<dyn ExecutionPlan>,
+    properties: PlanProperties,
 }
 
 impl CollectExec {
     pub fn new(plan: Arc<dyn ExecutionPlan>) -> Self {
-        Self { plan }
+        Self {
+            plan,
+            properties: todo!(),
+        }
     }
 }
 
@@ -78,7 +83,7 @@ impl ExecutionPlan for CollectExec {
     // }
 
     fn properties(&self) -> &datafusion::physical_plan::PlanProperties {
-        todo!()
+        &self.properties
     }
 
     fn children(&self) -> Vec<Arc<dyn ExecutionPlan>> {

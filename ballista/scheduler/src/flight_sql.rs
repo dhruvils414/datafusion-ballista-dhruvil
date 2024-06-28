@@ -298,6 +298,8 @@ impl FlightSqlServiceImpl {
             let fiep = FlightEndpoint {
                 ticket: Some(ticket),
                 location: vec![loc],
+                expiration_time: todo!(),
+                app_metadata: todo!(),
             };
             fieps.push(fiep);
         }
@@ -327,6 +329,8 @@ impl FlightSqlServiceImpl {
         let fiep = FlightEndpoint {
             ticket: Some(ticket),
             location: vec![loc],
+            expiration_time: todo!(),
+            app_metadata: todo!(),
         };
         let fieps = vec![fiep];
         Ok(fieps)
@@ -406,6 +410,7 @@ impl FlightSqlServiceImpl {
             total_records: num_rows,
             total_bytes: num_bytes,
             ordered: false,
+            app_metadata: todo!(),
         };
         Response::new(info)
     }
