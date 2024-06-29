@@ -17,7 +17,6 @@
 
 //! Implementation of the Apache Arrow Flight protocol that wraps an executor.
 
-use ::core::future::Future;
 use arrow::ipc::reader::StreamReader;
 use arrow_flight::PollInfo;
 use std::convert::TryFrom;
@@ -206,47 +205,10 @@ impl FlightService for BallistaFlightService {
     ) -> Result<Response<Self::DoExchangeStream>, Status> {
         Err(Status::unimplemented("do_exchange"))
     }
-
-    #[doc = r""]
-    #[doc = r" For a given FlightDescriptor, start a query and get information"]
-    #[doc = r" to poll its execution status. This is a useful interface if the"]
-    #[doc = r" query may be a long-running query. The first PollFlightInfo call"]
-    #[doc = r" should return as quickly as possible. (GetFlightInfo doesn't"]
-    #[doc = r" return until the query is complete.)"]
-    #[doc = r""]
-    #[doc = r" A client can consume any available results before"]
-    #[doc = r" the query is completed. See PollInfo.info for details."]
-    #[doc = r""]
-    #[doc = r" A client can poll the updated query status by calling"]
-    #[doc = r" PollFlightInfo() with PollInfo.flight_descriptor. A server"]
-    #[doc = r" should not respond until the result would be different from last"]
-    #[doc = r#" time. That way, the client can "long poll" for updates"#]
-    #[doc = r" without constantly making requests. Clients can set a short timeout"]
-    #[doc = r" to avoid blocking calls if desired."]
-    #[doc = r""]
-    #[doc = r" A client can't use PollInfo.flight_descriptor after"]
-    #[doc = r" PollInfo.expiration_time passes. A server might not accept the"]
-    #[doc = r" retry descriptor anymore and the query may be cancelled."]
-    #[doc = r""]
-    #[doc = r" A client may use the CancelFlightInfo action with"]
-    #[doc = r" PollInfo.info to cancel the running query."]
-    #[must_use]
-    #[allow(clippy::type_complexity, clippy::type_repetition_in_bounds)]
-
-    fn poll_flight_info<'life0, 'async_trait>(
-        &'life0 self,
+    async fn poll_flight_info(
+        &self,
         request: tonic::Request<FlightDescriptor>,
-    ) -> ::core::pin::Pin<
-        Box<
-            dyn Future<Output = Result<Response<PollInfo>, Status>>
-                + ::core::marker::Send
-                + 'async_trait,
-        >,
-    >
-    where
-        'life0: 'async_trait,
-        Self: 'async_trait,
-    {
+    ) -> Result<Response<PollInfo>, Status> {
         todo!()
     }
 }
