@@ -22,7 +22,6 @@ use datafusion::execution::context::DataFilePaths;
 use log::info;
 use parking_lot::Mutex;
 use sqlparser::ast::Statement;
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -373,12 +372,12 @@ impl BallistaContext {
             for (name, prov) in &state.tables {
                 // ctx is shared between queries, check table exists or not before register
                 let table_ref = TableReference::Bare {
-                    table: Cow::Borrowed(name),
+                    table: Arc::from(name.to_string()),
                 };
                 if !ctx.table_exist(table_ref)? {
                     ctx.register_table(
                         TableReference::Bare {
-                            table: Cow::Borrowed(name),
+                            table: Arc::from(name.to_string()),
                         },
                         Arc::clone(prov),
                     )?;
@@ -402,7 +401,7 @@ impl BallistaContext {
                     ..
                 },
             )) => {
-                let table_exists = ctx.table_exist(name)?;
+                let table_exists = ctx.table_exist(name.clone())?;
                 let schema: SchemaRef = Arc::new(schema.as_ref().to_owned().into());
                 let table_partition_cols = table_partition_cols
                     .iter()
@@ -478,9 +477,9 @@ impl BallistaContext {
 #[cfg(feature = "standalone")]
 mod standalone_tests {
     use ballista_core::error::Result;
+    use datafusion::config::TableParquetOptions;
     use datafusion::dataframe::DataFrameWriteOptions;
     use datafusion::datasource::listing::ListingTableUrl;
-    use datafusion::parquet::file::properties::WriterProperties;
     use tempfile::TempDir;
 
     #[tokio::test]
@@ -507,7 +506,7 @@ mod standalone_tests {
         df.write_parquet(
             &file_path,
             DataFrameWriteOptions::default(),
-            Some(WriterProperties::default()),
+            Some(TableParquetOptions::default()),
         )
         .await?;
         Ok(())
@@ -662,7 +661,6 @@ mod standalone_tests {
                         collect_stat: x.collect_stat,
                         target_partitions: x.target_partitions,
                         file_sort_order: vec![],
-                        file_type_write_options: None,
                     };
 
                     let table_paths = listing_table

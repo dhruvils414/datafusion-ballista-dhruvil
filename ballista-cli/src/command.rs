@@ -54,23 +54,24 @@ impl Command {
         ctx: &BallistaContext,
         print_options: &mut PrintOptions,
     ) -> Result<()> {
+        let schema = todo!();
         let now = Instant::now();
         match self {
             Self::Help => print_options
-                .print_batches(&[all_commands_info()], now)
+                .print_batches(schema, &[all_commands_info()], now)
                 .map_err(BallistaError::DataFusionError),
             Self::ListTables => {
                 let df = ctx.sql("SHOW TABLES").await?;
                 let batches = df.collect().await?;
                 print_options
-                    .print_batches(&batches, now)
+                    .print_batches(schema, &batches, now)
                     .map_err(BallistaError::DataFusionError)
             }
             Self::DescribeTable(name) => {
                 let df = ctx.sql(&format!("SHOW COLUMNS FROM {name}")).await?;
                 let batches = df.collect().await?;
                 print_options
-                    .print_batches(&batches, now)
+                    .print_batches(schema, &batches, now)
                     .map_err(BallistaError::DataFusionError)
             }
             Self::QuietMode(quiet) => {

@@ -101,9 +101,21 @@ impl FlightSqlServiceImpl {
             Field::new("table_name", DataType::Utf8, false),
             Field::new("table_type", DataType::Utf8, false),
         ]));
-        let tables = ctx.tables()?; // resolved in #501
-        let names: Vec<_> = tables.iter().map(|it| Some(it.as_str())).collect();
-        let types: Vec<_> = names.iter().map(|_| Some("TABLE")).collect();
+        let mut names: Vec<Option<String>> = vec![];
+        for catalog_name in ctx.catalog_names() {
+            let catalog = ctx
+                .catalog(&catalog_name)
+                .expect("catalog should have been found");
+            for schema_name in catalog.schema_names() {
+                let schema = catalog
+                    .schema(&schema_name)
+                    .expect("schema should have been found");
+                for table_name in schema.table_names() {
+                    names.push(Some(table_name));
+                }
+            }
+        }
+        let types: Vec<_> = names.iter().map(|_| Some("TABLE".to_string())).collect();
         let cats: Vec<_> = names.iter().map(|_| None).collect();
         let schemas: Vec<_> = names.iter().map(|_| None).collect();
         let rb = RecordBatch::try_new(
