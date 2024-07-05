@@ -249,6 +249,12 @@ impl BallistaContext {
         Ok(df)
     }
 
+    pub fn read_table(
+        &self,
+        provider: Arc<dyn TableProvider>
+    ) -> Result<DataFrame> {
+        self.context.read_table(provider)
+    }
     /// Register a DataFrame as a table that can be referenced from a SQL query
     pub fn register_table(
         &self,
