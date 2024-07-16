@@ -46,6 +46,10 @@ use datafusion::prelude::{
 };
 use datafusion::sql::parser::{DFParser, Statement as DFStatement};
 
+use datafusion::{
+    catalog::{schema::SchemaProvider, CatalogProvider}
+};
+
 struct BallistaContextState {
     /// Ballista configuration
     config: BallistaConfig,
@@ -317,6 +321,20 @@ impl BallistaContext {
             }
             _ => Err(DataFusionError::Internal("Expected tables scan".to_owned())),
         }
+    }
+
+    /// Registers a named catalog using a custom `CatalogProvider` so that
+    /// it can be referenced from SQL statements executed against this
+    /// context.
+    ///
+    /// Returns the [`CatalogProvider`] previously registered for this
+    /// name, if any
+    pub fn register_catalog(
+        &self,
+        name: impl Into<String>,
+        catalog: Arc<dyn CatalogProvider>,
+    ) -> Option<Arc<dyn CatalogProvider>> {
+        self.context.register_catalog(name, catalog)
     }
 
     /// is a 'show *' sql
