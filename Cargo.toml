@@ -35,12 +35,12 @@ arrow-flight = { version = "51.0.0", features = ["flight-sql-experimental"] }
 arrow-schema = { version = "51.0.0", default-features = false }
 configure_me = { version = "0.4.0" }
 configure_me_codegen = { version = "0.4.4" }
-datafusion = { path = "../query-rust/datafusion/core" }
-datafusion-sql = { path = "../query-rust/datafusion/sql" }
-datafusion-expr = { path = "../query-rust/datafusion/expr" }
-datafusion-common = { path = "../query-rust/datafusion/common" }
-datafusion-cli = { path = "../query-rust/datafusion-cli" }
-datafusion-proto = { path = "../query-rust/datafusion/proto" }
+datafusion = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
+datafusion-sql = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
+datafusion-expr ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
+datafusion-common ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
+datafusion-cli ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
+datafusion-proto = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
 object_store = "0.9.0"
 sqlparser = "0.45.0"
 tonic = { version = "0.11" }
