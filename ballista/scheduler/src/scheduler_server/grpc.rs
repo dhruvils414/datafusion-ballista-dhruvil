@@ -467,8 +467,9 @@ impl<T: 'static + AsLogicalPlan, U: 'static + AsExecutionPlan> SchedulerGrpc
 
             let plan = match query {
                 Query::LogicalPlan(message) => {
-                    match T::try_decode(message.as_slice()).and_then(|m| {
-                        m.try_into_logical_plan(
+                    match T::try_decode(message.as_slice()).and_then(|message| {
+                        eprintln!("Inside execute_query function. {:#?}", message);
+                        message.try_into_logical_plan(
                             session_ctx.deref(),
                             self.state.codec.logical_extension_codec(),
                         )

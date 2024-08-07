@@ -239,6 +239,8 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
     ) -> Result<SendableRecordBatchStream> {
         assert_eq!(0, partition);
 
+        eprintln!("Inside DistributedQueryExec function.");
+
         let mut buf: Vec<u8> = vec![];
         let plan_message = T::try_from_logical_plan(
             &self.plan,
@@ -247,6 +249,7 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
         .map_err(|e| {
             DataFusionError::Internal(format!("failed to serialize logical plan: {e:?}"))
         })?;
+        eprintln!("try_from_logical_plan executed successfully. DistributedQueryExec function.");
         plan_message.try_encode(&mut buf).map_err(|e| {
             DataFusionError::Execution(format!("failed to encode logical plan: {e:?}"))
         })?;
