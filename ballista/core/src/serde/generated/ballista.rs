@@ -1488,6 +1488,7 @@ pub mod scheduler_grpc_client {
             tonic::Status,
         > {
             eprintln!("Inside execute_query function. Ballista.rs");
+
             self.inner
                 .ready()
                 .await
@@ -1497,6 +1498,9 @@ pub mod scheduler_grpc_client {
                         format!("Service was not ready: {}", e.into()),
                     )
                 })?;
+            
+            eprintln!("Inside execute_query function. inner ready() executed Ballista.rs");
+
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/ballista.protobuf.SchedulerGrpc/ExecuteQuery",

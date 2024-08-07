@@ -414,6 +414,7 @@ impl<T: 'static + AsLogicalPlan, U: 'static + AsExecutionPlan> SchedulerGrpc
         &self,
         request: Request<ExecuteQueryParams>,
     ) -> Result<Response<ExecuteQueryResult>, Status> {
+        eprintln!("Inside execute_query function. grpc.rs");
         let query_params = request.into_inner();
         if let ExecuteQueryParams {
             query: Some(query),
