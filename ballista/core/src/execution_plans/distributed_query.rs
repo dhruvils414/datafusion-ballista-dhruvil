@@ -253,6 +253,9 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
         plan_message.try_encode(&mut buf).map_err(|e| {
             DataFusionError::Execution(format!("failed to encode logical plan: {e:?}"))
         })?;
+        eprintln!("try_encode executed successfully. DistributedQueryExec function.");
+        eprintln!("buf length: {}", buf.len());
+        eprintln!("buf: {:#?}", buf);
 
         let query = ExecuteQueryParams {
             query: Some(Query::LogicalPlan(buf)),
@@ -261,6 +264,8 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
                 self.session_id.clone(),
             )),
         };
+
+        eprintln!("ExecuteQueryParams executed successfully. {:#?}", query);
 
         let stream = futures::stream::once(
             execute_query(
@@ -272,6 +277,8 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
             .map_err(|e| ArrowError::ExternalError(Box::new(e))),
         )
         .try_flatten();
+
+        eprintln!("execute_query executed successfully. DistributedQueryExec function.");
 
         let schema = self.schema();
         Ok(Box::pin(RecordBatchStreamAdapter::new(schema, stream)))
@@ -292,6 +299,7 @@ async fn execute_query(
     max_message_size: usize,
 ) -> Result<impl Stream<Item = Result<RecordBatch>> + Send> {
     info!("Connecting to Ballista scheduler at {}", scheduler_url);
+    eprintln!("Connecting to Ballista scheduler at {}", scheduler_url);
     // TODO reuse the scheduler to avoid connecting to the Ballista scheduler again and again
     let connection = create_grpc_client_connection(scheduler_url)
         .await
