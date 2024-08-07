@@ -305,15 +305,21 @@ async fn execute_query(
         .await
         .map_err(|e| DataFusionError::Execution(format!("{e:?}")))?;
 
+    eprintln!("Connection established successfully. {:#?}", connection);
+
     let mut scheduler = SchedulerGrpcClient::new(connection)
         .max_encoding_message_size(max_message_size)
         .max_decoding_message_size(max_message_size);
+
+    eprintln!("Scheduler connected successfully. {:#?}", scheduler);
 
     let query_result = scheduler
         .execute_query(query)
         .await
         .map_err(|e| DataFusionError::Execution(format!("{e:?}")))?
         .into_inner();
+
+    eprintln!("Query Result Calculated {:#?}", query_result);
 
     let query_result = match query_result.result.unwrap() {
         execute_query_result::Result::Success(success_result) => success_result,
