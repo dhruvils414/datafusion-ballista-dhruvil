@@ -476,6 +476,7 @@ impl<T: 'static + AsLogicalPlan, U: 'static + AsExecutionPlan> SchedulerGrpc
                     }) {
                         Ok(plan) => plan,
                         Err(e) => {
+                            eprintln!("Inside execute_query function. Error Branch. {:#?}", e);
                             let msg =
                                 format!("Could not parse logical plan protobuf: {e}");
                             error!("{}", msg);
