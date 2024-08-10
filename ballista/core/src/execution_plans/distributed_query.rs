@@ -39,6 +39,9 @@ use datafusion::physical_plan::{
 use datafusion_proto::logical_plan::{
     AsLogicalPlan, DefaultLogicalExtensionCodec, LogicalExtensionCodec,
 };
+
+use datafusion_iceberg::logicalextensioncodec::IcebergExtensionCodec;
+
 use futures::{Stream, StreamExt, TryFutureExt, TryStreamExt};
 use log::{error, info};
 use std::any::Any;
@@ -93,7 +96,7 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
             scheduler_url,
             config,
             plan,
-            extension_codec: Arc::new(DefaultLogicalExtensionCodec {}),
+            extension_codec: Arc::new(IcebergExtensionCodec {}),
             plan_repr: PhantomData,
             session_id,
             properties,

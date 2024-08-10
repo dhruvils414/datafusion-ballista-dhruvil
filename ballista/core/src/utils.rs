@@ -49,6 +49,8 @@ use datafusion::physical_plan::{metrics, ExecutionPlan, RecordBatchStream};
 use datafusion_proto::logical_plan::{
     AsLogicalPlan, DefaultLogicalExtensionCodec, LogicalExtensionCodec,
 };
+use datafusion_iceberg::logicalextensioncodec::IcebergExtensionCodec;
+
 use futures::StreamExt;
 use log::error;
 use std::io::{BufWriter, Write};
@@ -277,7 +279,7 @@ impl<T: 'static + AsLogicalPlan> BallistaQueryPlanner<T> {
         Self {
             scheduler_url,
             config,
-            extension_codec: Arc::new(DefaultLogicalExtensionCodec {}),
+            extension_codec: Arc::new(IcebergExtensionCodec {}),
             plan_repr: PhantomData,
         }
     }

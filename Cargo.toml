@@ -41,6 +41,10 @@ datafusion-expr ={ git = "https://github.com/dhruvils414/query-rust", branch = "
 datafusion-common ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
 datafusion-cli ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
 datafusion-proto = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
+iceberg-rust = { git = "https://github.com/dhruvils414/iceberg-rust.git", branch = "object_store"}
+datafusion_iceberg = { git = "https://github.com/dhruvils414/iceberg-rust.git", branch = "object_store"}
+iceberg-sql-catalog = { git = "https://github.com/dhruvils414/iceberg-rust.git", branch = "object_store"}
+
 object_store = "0.9.0"
 sqlparser = "0.45.0"
 tonic = { version = "0.11" }

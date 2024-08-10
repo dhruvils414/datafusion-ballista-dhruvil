@@ -34,6 +34,8 @@ use datafusion_proto::{
     physical_plan::{AsExecutionPlan, PhysicalExtensionCodec},
 };
 
+use datafusion_iceberg::logicalextensioncodec::IcebergExtensionCodec;
+
 use prost::Message;
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -85,7 +87,7 @@ pub struct BallistaCodec<
 impl Default for BallistaCodec {
     fn default() -> Self {
         Self {
-            logical_extension_codec: Arc::new(DefaultLogicalExtensionCodec {}),
+            logical_extension_codec: Arc::new(IcebergExtensionCodec {}),
             physical_extension_codec: Arc::new(BallistaPhysicalExtensionCodec {}),
             logical_plan_repr: PhantomData,
             physical_plan_repr: PhantomData,
