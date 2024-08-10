@@ -340,7 +340,7 @@ impl BallistaContext {
 
     /// is a 'show *' sql
     pub async fn is_show_statement(&self, sql: &str) -> Result<bool> {
-        println!("We are in the is_show_statement table");
+        println!("We are in the is_show_statement table a");
         let mut is_show_variable: bool = false;
         let statements = DFParser::parse_sql(sql)?;
 
