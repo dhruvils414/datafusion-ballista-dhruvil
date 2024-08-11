@@ -37,7 +37,7 @@ use datafusion::physical_plan::{
     PlanProperties, SendableRecordBatchStream, Statistics,
 };
 use datafusion_proto::logical_plan::{
-    AsLogicalPlan, DefaultLogicalExtensionCodec, LogicalExtensionCodec,
+    AsLogicalPlan, LogicalExtensionCodec,
 };
 
 use datafusion_iceberg::logicalextensioncodec::IcebergExtensionCodec;

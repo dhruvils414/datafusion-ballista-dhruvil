@@ -30,7 +30,7 @@ use datafusion_proto::physical_plan::DefaultPhysicalExtensionCodec;
 use datafusion_proto::protobuf::{LogicalPlanNode, PhysicalPlanNode};
 use datafusion_proto::{
     convert_required,
-    logical_plan::{AsLogicalPlan, DefaultLogicalExtensionCodec, LogicalExtensionCodec},
+    logical_plan::{AsLogicalPlan, LogicalExtensionCodec},
     physical_plan::{AsExecutionPlan, PhysicalExtensionCodec},
 };
 
