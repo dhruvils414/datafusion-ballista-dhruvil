@@ -254,6 +254,7 @@ pub fn create_df_ctx_with_ballista_query_planner<T: 'static + AsLogicalPlan>(
     let session_config = SessionConfig::new()
         .with_target_partitions(config.default_shuffle_partitions())
         .with_information_schema(true);
+
     let mut session_state = SessionState::new_with_config_rt(
         session_config,
         Arc::new(

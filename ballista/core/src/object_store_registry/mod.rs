@@ -33,6 +33,7 @@ use object_store::azure::MicrosoftAzureBuilder;
 use object_store::gcp::GoogleCloudStorageBuilder;
 use object_store::ObjectStore;
 use std::sync::Arc;
+use object_store::local::LocalFileSystem;
 use url::Url;
 
 /// Get a RuntimeConfig with specific ObjectStoreRegistry
@@ -68,9 +69,12 @@ impl BallistaObjectStoreRegistry {
         {
             if url.as_str().starts_with("s3://") {
                 if let Some(bucket_name) = url.host_str() {
+                    let parts: Vec<&str> = bucket_name.split('~').collect();
+
                     let store = Arc::new(
                         AmazonS3Builder::from_env()
-                            .with_bucket_name(bucket_name)
+                            .with_bucket_name(parts[0].to_string())
+                            .with_region(parts[1].to_string())
                             .build()?,
                     );
                     return Ok(store);
@@ -137,8 +141,7 @@ impl ObjectStoreRegistry for BallistaObjectStoreRegistry {
     }
 
     fn get_store(&self, url: &Url) -> datafusion::error::Result<Arc<dyn ObjectStore>> {
-        println!("get store : {:?}", url );
-        println!("Get store : {:?}",  self.inner.get_store(url));
+
         self.inner.get_store(url).or_else(|_| {
             let store = self.get_feature_store(url)?;
             self.inner.register_store(url, store.clone());

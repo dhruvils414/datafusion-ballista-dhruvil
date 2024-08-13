@@ -265,7 +265,6 @@ impl BallistaContext {
         name: &str,
         table: Arc<dyn TableProvider>,
     ) -> Result<()> {
-        println!("We are in the register table");
         let mut state = self.state.lock();
         state.tables.insert(name.to_owned(), table);
         Ok(())
@@ -340,7 +339,6 @@ impl BallistaContext {
 
     /// is a 'show *' sql
     pub async fn is_show_statement(&self, sql: &str) -> Result<bool> {
-        println!("We are in the is_show_statement table a");
         let mut is_show_variable: bool = false;
         let statements = DFParser::parse_sql(sql)?;
 
