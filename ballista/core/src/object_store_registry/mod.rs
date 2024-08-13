@@ -71,13 +71,24 @@ impl BallistaObjectStoreRegistry {
                 if let Some(bucket_name) = url.host_str() {
                     let parts: Vec<&str> = bucket_name.split('~').collect();
 
+                    let object_store: Arc<dyn ObjectStore> = Arc::new(
+                        AmazonS3Builder::new()
+                            .with_region("us-east-1")
+                            .with_bucket_name(parts[0].to_string())
+                            .with_access_key_id("AKIAYL6B24VPEGJVNVK2")
+                            .with_secret_access_key("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")
+                            .build()
+                            .unwrap(),
+                    );
+
+
                     let store = Arc::new(
                         AmazonS3Builder::from_env()
                             .with_bucket_name(parts[0].to_string())
                             .with_region(parts[1].to_string())
                             .build()?,
                     );
-                    return Ok(store);
+                    return Ok(object_store);
                 }
                 // Support Alibaba Cloud OSS
                 // Use S3 compatibility mode to access Alibaba Cloud OSS
