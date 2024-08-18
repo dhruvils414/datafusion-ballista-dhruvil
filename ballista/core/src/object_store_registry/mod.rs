@@ -81,13 +81,15 @@ impl BallistaObjectStoreRegistry {
                             .unwrap(),
                     );
 
-
+                    /*
                     let store = Arc::new(
                         AmazonS3Builder::from_env()
                             .with_bucket_name(parts[0].to_string())
                             .with_region(parts[1].to_string())
                             .build()?,
                     );
+
+                     */
                     return Ok(object_store);
                 }
                 // Support Alibaba Cloud OSS
@@ -152,6 +154,8 @@ impl ObjectStoreRegistry for BallistaObjectStoreRegistry {
     }
 
     fn get_store(&self, url: &Url) -> datafusion::error::Result<Arc<dyn ObjectStore>> {
+
+        println!("in the get_store {:?}", url);
 
         self.inner.get_store(url).or_else(|_| {
             let store = self.get_feature_store(url)?;
