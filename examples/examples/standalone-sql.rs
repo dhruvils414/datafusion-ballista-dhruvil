@@ -37,7 +37,7 @@ async fn main() -> Result<()> {
     )
     .await?;
 
-    let df = ctx.sql("select count(1) from test").await?;
+    let df = ctx.sql("select * from test where id = 3" ).await?;
 
     df.show().await?;
     Ok(())
