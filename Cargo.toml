@@ -35,15 +35,15 @@ arrow-flight = { version = "51.0.0", features = ["flight-sql-experimental"] }
 arrow-schema = { version = "51.0.0", default-features = false }
 configure_me = { version = "0.4.0" }
 configure_me_codegen = { version = "0.4.4" }
-datafusion = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
-datafusion-sql = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
-datafusion-expr ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
-datafusion-common ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
-datafusion-cli ={ git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
-datafusion-proto = { git = "https://github.com/dhruvils414/query-rust", branch = "integration" }
-iceberg-rust = { git = "https://github.com/dhruvils414/iceberg-rust.git", branch = "object_store"}
-datafusion_iceberg = { git = "https://github.com/dhruvils414/iceberg-rust.git", branch = "object_store"}
-iceberg-sql-catalog = { git = "https://github.com/dhruvils414/iceberg-rust.git", branch = "object_store"}
+datafusion = { path = "../datafusion/datafusion/core" }
+datafusion-sql = { path = "../datafusion/datafusion/sql" }
+datafusion-expr = { path = "../datafusion/datafusion/expr" }
+datafusion-common = { path = "../datafusion/datafusion/common" }
+datafusion-cli = { path = "../datafusion/datafusion-cli" }
+datafusion-proto = { path = "../datafusion/datafusion/proto" }
+iceberg-rust = { path = "../datafusion-iceberg/iceberg-rust" }
+iceberg-sql-catalog = { path = "../datafusion-iceberg/iceberg-sql-catalog" }
+datafusion_iceberg = { path = "../datafusion-iceberg/datafusion_iceberg" }
 
 object_store = "0.9.0"
 sqlparser = "0.45.0"
