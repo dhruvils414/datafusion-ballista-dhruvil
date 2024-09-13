@@ -55,12 +55,15 @@ datafusion-objectstore-hdfs = { version = "0.1.4", default-features = false, opt
 datafusion-proto = { workspace = true }
 futures = "0.3"
 hashbrown = "0.14"
+dirs = "5.0.1"  # For environment variable handling
 
 iceberg-rust = { workspace = true }
 datafusion_iceberg = { workspace = true }
 iceberg-sql-catalog = { workspace = true }
 
-
+aws-config = "0.6.0"
+aws-sdk-s3 = "0.6.0"
+dotenv = "0.15"
 
 itertools = "0.12"
 libloading = "0.8.0"

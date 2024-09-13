@@ -35,15 +35,15 @@ arrow-flight = { version = "51.0.0", features = ["flight-sql-experimental"] }
 arrow-schema = { version = "51.0.0", default-features = false }
 configure_me = { version = "0.4.0" }
 configure_me_codegen = { version = "0.4.4" }
-datafusion = { path = "../datafusion/datafusion/core" }
-datafusion-sql = { path = "../datafusion/datafusion/sql" }
-datafusion-expr = { path = "../datafusion/datafusion/expr" }
-datafusion-common = { path = "../datafusion/datafusion/common" }
-datafusion-cli = { path = "../datafusion/datafusion-cli" }
-datafusion-proto = { path = "../datafusion/datafusion/proto" }
-iceberg-rust = { path = "../datafusion-iceberg/iceberg-rust" }
-iceberg-sql-catalog = { path = "../datafusion-iceberg/iceberg-sql-catalog" }
-datafusion_iceberg = { path = "../datafusion-iceberg/datafusion_iceberg" }
+datafusion = { path = "../query-rust/datafusion/core" }
+datafusion-sql = { path = "../query-rust/datafusion/sql" }
+datafusion-expr = { path = "../query-rust/datafusion/expr" }
+datafusion-common = { path = "../query-rust/datafusion/common" }
+datafusion-cli = { path = "../query-rust/datafusion-cli" }
+datafusion-proto = { path = "../query-rust/datafusion/proto" }
+iceberg-rust = { path = "../iceberg-rust/iceberg-rust" }
+iceberg-sql-catalog = { path = "../iceberg-rust/iceberg-sql-catalog" }
+datafusion_iceberg = { path = "../iceberg-rust/datafusion_iceberg" }
 
 object_store = "0.9.0"
 sqlparser = "0.45.0"
