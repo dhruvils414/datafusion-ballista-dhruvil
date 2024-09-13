@@ -35,7 +35,7 @@ use object_store::ObjectStore;
 use std::sync::Arc;
 use object_store::local::LocalFileSystem;
 use url::Url;
-use aws_sdk_s3::{Client as S3Client, Region, Credentials};
+use aws_sdk_s3::{Client as S3Client};
 use aws_sdk_s3::config::Config;
 use std::env;
 use std::fs;
@@ -139,15 +139,33 @@ impl BallistaObjectStoreRegistry {
                 if let Some(bucket_name) = url.host_str() {
                     let parts: Vec<&str> = bucket_name.split('~').collect();
 
-                    let object_store: Arc<dyn ObjectStore> = Arc::new(
-                        AmazonS3Builder::new()
-                            .with_region("us-east-1")
-                            .with_bucket_name(parts[0].to_string())
-                            .with_access_key_id("AKIAYL6B24VPEGJVNVK2")
-                            .with_secret_access_key("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")
-                            .build()
-                            .unwrap(),
-                    );
+                    let object_store: Arc<dyn ObjectStore> = match get_aws_credentials() {
+                        Ok(Some((access_key, secret_key))) => {
+
+                            println!("access key {:?}", access_key);
+                            Arc::new(
+                                AmazonS3Builder::new()
+                                    .with_region("us-east-1")
+                                    .with_bucket_name(parts[0].to_string())
+                                    .with_access_key_id(access_key)
+                                    .with_secret_access_key(secret_key)
+                                    .build()
+                                    .unwrap(),
+                            )
+                        }
+                        Ok(None) => {
+                            // If no explicit credentials, use environment variables or default method
+                            Arc::new(
+                                AmazonS3Builder::from_env()
+                                    .with_bucket_name(parts[0].to_string())
+                                    .with_region("us-east-1")
+                                    .build()
+                                    .unwrap(),
+                            )
+                        }
+                        Err(e) => return Err(DataFusionError::Execution(format!("Failed to load credentials: {:?}", e))),
+                    };
+
 
                     /*
                     let store = Arc::new(
