@@ -72,7 +72,6 @@ fn get_aws_credentials() -> Result<Option<(String, String)>, String> {
 
     // Otherwise, read from the config file (local setup)
     let config_file_path = dirs::home_dir().unwrap_or_else(|| PathBuf::from(".")).join(".aws/credentials");
-    println!("{:?}", config_file_path);
     if config_file_path.exists() {
         let contents = fs::read_to_string(config_file_path).expect("Unable to read config file");
         let mut in_default_profile = false;
@@ -141,8 +140,6 @@ impl BallistaObjectStoreRegistry {
 
                     let object_store: Arc<dyn ObjectStore> = match get_aws_credentials() {
                         Ok(Some((access_key, secret_key))) => {
-
-                            println!("access key {:?}", access_key);
                             Arc::new(
                                 AmazonS3Builder::new()
                                     .with_region("us-east-1")
