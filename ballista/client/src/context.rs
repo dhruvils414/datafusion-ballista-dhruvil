@@ -380,6 +380,7 @@ impl BallistaContext {
         let mut ctx = self.context.clone();
 
         let is_show = self.is_show_statement(sql).await?;
+        println!("Is Show Statement : {}", is_show);
         // the show tables、 show columns sql can not run at scheduler because the tables is store at client
         if is_show {
             let state = self.state.lock();
@@ -399,17 +400,26 @@ impl BallistaContext {
                     table: Arc::from(name.to_string()),
                 };
                 if !ctx.table_exist(table_ref)? {
+                    println!("Registering Table with Datafusion {}", name);
                     ctx.register_table(
                         TableReference::Bare {
                             table: Arc::from(name.to_string()),
                         },
                         Arc::clone(prov),
                     )?;
+                } else {
+                    println!("{} Table already exists with Datafusion", name);
                 }
             }
         }
+        println!("Checking if table exists in ctx ( .sql function ) {}", ctx.table_exist("dhruvil10")?);
 
         let plan = ctx.state().create_logical_plan(sql).await?;
+
+        println!("Logical Plan Created {:#?}", plan);
+
+        println!("Checking if table exists in ctx ( .sql function : After create logical plan) {}",
+        ctx.table_exist("dhruvil10")?);
 
         match plan {
             LogicalPlan::Ddl(DdlStatement::CreateExternalTable(

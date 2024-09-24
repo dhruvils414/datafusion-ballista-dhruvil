@@ -78,6 +78,7 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
         plan: LogicalPlan,
         session_id: String,
     ) -> Self {
+        println!("Creating DistributedQueryExec new");
         let fields = plan
             .schema()
             .fields()
@@ -144,6 +145,7 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
         plan_repr: PhantomData<T>,
         session_id: String,
     ) -> Self {
+        println!("Creating DistributedQueryExec with repr");
         let fields = plan
             .schema()
             .fields()
@@ -153,6 +155,8 @@ impl<T: 'static + AsLogicalPlan> DistributedQueryExec<T> {
         let metadata = plan.schema().metadata().clone();
         let ss = Schema::new(fields);
         let ss = ss.with_metadata(metadata);
+
+        // list the tables registered here.
         let properties = PlanProperties::new(
             EquivalenceProperties::new(Arc::new(ss)),
             Partitioning::UnknownPartitioning(1),
@@ -243,6 +247,7 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
         assert_eq!(0, partition);
 
         let mut buf: Vec<u8> = vec![];
+        println!("Entering try_from_logical_plan");
         let plan_message = T::try_from_logical_plan(
             &self.plan,
             self.extension_codec.as_ref(),
@@ -250,9 +255,12 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
         .map_err(|e| {
             DataFusionError::Internal(format!("failed to serialize logical plan: {e:?}"))
         })?;
+        println!("Plan Serialized Try from logical plan done");
         plan_message.try_encode(&mut buf).map_err(|e| {
             DataFusionError::Execution(format!("failed to encode logical plan: {e:?}"))
         })?;
+
+        println!("Encoded Plan");
 
         let query = ExecuteQueryParams {
             query: Some(Query::LogicalPlan(buf)),
@@ -261,6 +269,8 @@ impl<T: 'static + AsLogicalPlan> ExecutionPlan for DistributedQueryExec<T> {
                 self.session_id.clone(),
             )),
         };
+
+        println!("Query Created");
 
         let stream = futures::stream::once(
             execute_query(
@@ -297,15 +307,21 @@ async fn execute_query(
         .await
         .map_err(|e| DataFusionError::Execution(format!("{e:?}")))?;
 
+    println!("Connection Created");
+
     let mut scheduler = SchedulerGrpcClient::new(connection)
         .max_encoding_message_size(max_message_size)
         .max_decoding_message_size(max_message_size);
+
+    println!("Scheduler Created");
 
     let query_result = scheduler
         .execute_query(query)
         .await
         .map_err(|e| DataFusionError::Execution(format!("{e:?}")))?
         .into_inner();
+
+    println!("Query Result Generated");
 
     let query_result = match query_result.result.unwrap() {
         execute_query_result::Result::Success(success_result) => success_result,
@@ -315,6 +331,8 @@ async fn execute_query(
             )));
         }
     };
+
+    println!("Query Result Unwrapped");
 
     assert_eq!(
         session_id, query_result.session_id,

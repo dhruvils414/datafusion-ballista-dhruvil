@@ -1487,6 +1487,7 @@ pub mod scheduler_grpc_client {
             tonic::Response<super::ExecuteQueryResult>,
             tonic::Status,
         > {
+            println!("ballista.rs - execute_query function");
             self.inner
                 .ready()
                 .await

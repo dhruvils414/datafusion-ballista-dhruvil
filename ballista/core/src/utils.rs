@@ -320,6 +320,8 @@ impl<T: 'static + AsLogicalPlan> QueryPlanner for BallistaQueryPlanner<T> {
         logical_plan: &LogicalPlan,
         session_state: &SessionState,
     ) -> std::result::Result<Arc<dyn ExecutionPlan>, DataFusionError> {
+        println!("Inside BallistaQueryPlanner::create_physical_plan :: table dhruvil10 exists ?{}",
+            session_state.clone().check_if_table_exists("dhruvil10").unwrap());
         match logical_plan {
             LogicalPlan::Ddl(DdlStatement::CreateExternalTable(_)) => {
                 // table state is managed locally in the BallistaContext, not in the scheduler
